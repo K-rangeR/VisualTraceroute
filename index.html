@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Trace Route</title>
+    </head>
+    <body>
+        <h1>Trace Route Version 0.0</h1>
+        <div id="url">Connecting...</div>
+        <ul id="results"></ul>
+        <button id="btn" type="button">Start</button>
+        <script>
+            document.getElementById("btn").addEventListener("click", function() {
+                var heading = document.getElementById("url");
+                var results = document.getElementById("results");
+                var socket = new WebSocket("ws://localhost:8080/");
+
+                console.log("hello world");
+
+                socket.onopen = function(event) {
+                    heading.innerHTML = event.currentTarget.url;
+                };
+
+                socket.onerror = function(error) {
+                    heading.innerHTML = error;
+                };
+
+                socket.onmessage = function(event) {
+                    results.innerHTML += "<li>" + event.data + "</li>";
+                };
+
+                socket.onclose = function(event) {
+                    heading.innerHTML = "Connection is closed";
+                };
+            });
+        </script>
+    </body>
+</html>
