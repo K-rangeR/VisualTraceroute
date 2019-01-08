@@ -8,31 +8,38 @@
         <h1>Trace Route Version 0.0</h1>
         <div id="url">Connecting...</div>
         <ul id="results"></ul>
-        <button id="btn" type="button">Start</button>
+        <form id="inform" action="#" method="POST">
+            <input type="text" id="hostname" placeholder="Enter host name">
+            <input type="submit" id="btn" value="trace">
+        </form>
         <script>
-            document.getElementById("btn").addEventListener("click", function() {
-                var heading = document.getElementById("url");
+            window.onload = function() {
+                var inform = document.getElementById("inform");
+                var url = document.getElementById("url");
                 var results = document.getElementById("results");
+                var hostnameField = document.getElementById("hostname");
+
                 var socket = new WebSocket("ws://localhost:8080/");
-
-                console.log("hello world");
-
                 socket.onopen = function(event) {
-                    heading.innerHTML = event.currentTarget.url;
+                    url.innerHTML = event.currentTarget.url;
                 };
-
                 socket.onerror = function(error) {
-                    heading.innerHTML = error;
+                    url.innerHTML = error;
                 };
-
                 socket.onmessage = function(event) {
                     results.innerHTML += "<li>" + event.data + "</li>";
                 };
-
                 socket.onclose = function(event) {
-                    heading.innerHTML = "Connection is closed";
+                    url.innerHTML = "Connection is now closed";
+                    hostnameField.value = "";
                 };
-            });
+
+                inform.onsubmit = function(event) {
+                    event.preventDefault();
+                    results.innerHTML = "";
+                    socket.send(hostnameField.value);
+                };
+            };
         </script>
     </body>
 </html>

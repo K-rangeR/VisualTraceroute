@@ -1,6 +1,7 @@
-const WebSocket = require("ws");
-const http      = require("http");
-const fs        = require("fs");
+const WebSocket  = require("ws");
+const Traceroute = require("nodejs-traceroute");
+const http       = require("http");
+const fs         = require("fs");
 
 const webServer = http.createServer(function(request, response) {
     fs.readFile("./index.html", function(err, data) {
@@ -13,12 +14,15 @@ const webServer = http.createServer(function(request, response) {
 const server = new WebSocket.Server({server: webServer});
 server.on("connection", function conn(ws) {
     ws.on("message", function incoming(msg) {
-        console.log(msg);
+        const tracer = new Traceroute();
+        tracer
+            .on("hop", function(hop) {
+                ws.send(JSON.stringify(hop));
+            })
+            .on("close", function(code) {
+                ws.close();
+            });
+        tracer.trace(msg.toString());
     });
-    for (let i = 0; i < 10; i++) {
-        ws.send("hello world");
-    }
-    ws.close();
 });
-
 webServer.listen(8080);
