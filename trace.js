@@ -12,17 +12,18 @@ const webServer = http.createServer(function(request, response) {
 });
 
 const server = new WebSocket.Server({server: webServer});
-server.on("connection", function conn(ws) {
-    ws.on("message", function incoming(msg) {
+server.on("connection", function(ws) {
+    ws.on("message", function(hostname) {
         const tracer = new Traceroute();
         tracer
             .on("hop", function(hop) {
                 ws.send(JSON.stringify(hop));
             })
             .on("close", function(code) {
+                console.log("trace is done");
                 ws.close();
             });
-        tracer.trace(msg.toString());
+        tracer.trace(hostname.toString());
     });
 });
 webServer.listen(8080);
