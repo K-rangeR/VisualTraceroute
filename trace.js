@@ -17,6 +17,9 @@ server.on("connection", (ws) => {
         const tracer = new Traceroute();
         tracer
             .on("hop", (hop) => {
+                if (hop.ip == "*") {
+                    return;
+                }
                 ws.send(JSON.stringify(hop));
             })
             .on("close", (code) => {
