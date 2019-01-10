@@ -24,15 +24,13 @@ server.on("connection", (ws) => {
                 http.get(endpoint, (resp) => {
                     let loc = "";
                     resp.on("data", (data) => loc += data);
-                    resp.on("end", () => console.log(loc));
+                    resp.on("end", () => ws.send(JSON.stringify(loc)));
                 }).on("error", (err) => {
                     console.log("error:", err);
-                    ws.close();
                 });
             })
             .on("close", (code) => {
                 console.log("trace is done");
-                ws.close();
             });
         tracer.trace(hostname.toString());
     });
