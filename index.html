@@ -13,28 +13,28 @@
             <input type="submit" id="btn" value="trace">
         </form>
         <script>
-            window.onload = function() {
+            window.onload = () => {
                 var inform = document.getElementById("inform");
                 var url = document.getElementById("url");
                 var results = document.getElementById("results");
                 var hostnameField = document.getElementById("hostname");
 
                 var socket = new WebSocket("ws://localhost:8080/");
-                socket.onopen = function(event) {
+                socket.onopen = (event) => {
                     url.innerHTML = event.currentTarget.url;
                 };
-                socket.onerror = function(error) {
+                socket.onerror = (error) => {
                     url.innerHTML = error;
                 };
-                socket.onmessage = function(event) {
+                socket.onmessage = (event) => {
                     results.innerHTML += "<li>" + event.data + "</li>";
                 };
-                socket.onclose = function(event) {
+                socket.onclose = (event) => {
                     url.innerHTML = "Connection is now closed";
                     hostnameField.value = "";
                 };
 
-                inform.onsubmit = function(event) {
+                inform.onsubmit = (event) => {
                     event.preventDefault();
                     results.innerHTML = "";
                     socket.send(hostnameField.value);
