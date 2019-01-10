@@ -20,7 +20,15 @@ server.on("connection", (ws) => {
                 if (hop.ip == "*") {
                     return;
                 }
-                ws.send(JSON.stringify(hop));
+                const endpoint = "http://ip-api.com/json/" + hop.ip;
+                http.get(endpoint, (resp) => {
+                    let loc = "";
+                    resp.on("data", (data) => loc += data);
+                    resp.on("end", () => console.log(loc));
+                }).on("error", (err) => {
+                    console.log("error:", err);
+                    ws.close();
+                });
             })
             .on("close", (code) => {
                 console.log("trace is done");
