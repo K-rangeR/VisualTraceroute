@@ -2,26 +2,38 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <title>Trace Route</title>
     </head>
     <body>
-        <h1>Trace Route Version 0.0</h1>
-        <div id="url">Connecting...</div>
-        <table id="hops">
-            <thead>
-                <th>Hop</th>
-                <th>IP</th>
-                <th>City</th>
-                <th>Region</th>
-                <th>Country</th>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-        <form id="inform" action="#" method="POST">
-            <input type="text" id="hostname" placeholder="Enter host name">
-            <input type="submit" id="btn" value="trace">
-        </form>
+        <div class="container">
+            <div class="page-header">
+                <h1>Visual Traceroute</h1>
+            </div>
+            <div id="url">Connecting...</div>
+            <form id="inform" action="#" method="POST">
+                <input type="text" id="hostname" placeholder="Enter host name">
+                <input type="submit" id="btn" value="trace">
+            </form>
+            <div class="row">
+                <div class="col-lg-6">
+                    <table class="table table-striped" id="hops">
+                        <thead>
+                            <th>Hop</th>
+                            <th>IP</th>
+                            <th>City</th>
+                            <th>Region</th>
+                            <th>Country</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-6">
+                    <h1>MAP HERE</h1>
+                </div>
+            </div>
+        </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
         <script>
             $(function() {
