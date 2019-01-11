@@ -7,39 +7,57 @@
     <body>
         <h1>Trace Route Version 0.0</h1>
         <div id="url">Connecting...</div>
-        <ul id="results"></ul>
+        <table id="hops">
+            <thead>
+                <th>Hop</th>
+                <th>IP</th>
+                <th>City</th>
+                <th>Region</th>
+                <th>Country</th>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
         <form id="inform" action="#" method="POST">
             <input type="text" id="hostname" placeholder="Enter host name">
             <input type="submit" id="btn" value="trace">
         </form>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
         <script>
-            window.onload = () => {
-                var inform = document.getElementById("inform");
-                var url = document.getElementById("url");
-                var results = document.getElementById("results");
-                var hostnameField = document.getElementById("hostname");
+            $(function() {
+                var inform = $("#inform");
+                var url = $("#url");
+                var hostnameField = $("#hostname");
 
                 var socket = new WebSocket("ws://localhost:8080/");
                 socket.onopen = (event) => {
-                    url.innerHTML = event.currentTarget.url;
+                    url.html = event.currentTarget.url;
                 };
                 socket.onerror = (error) => {
-                    url.innerHTML = error;
+                    url.html = error;
                 };
                 socket.onmessage = (event) => {
-                    results.innerHTML += "<li>" + event.data + "</li>";
+                    let loc = JSON.parse(event.data);
+                    if (loc.status == "fail") {
+                        return;
+                    }
+                    let row = "<tr><td>0</td><td>" + loc.query
+                                 + "</td><td>" + loc.city
+                                 + "</td><td>" + loc.region
+                                 + "</td><td>" + loc.country
+                                 + "</td></tr>";
+                    $("#hops tbody").append(row);
                 };
                 socket.onclose = (event) => {
-                    url.innerHTML = "Connection is now closed";
-                    hostnameField.value = "";
+                    url.html = "Connection is now closed";
+                    hostnameField.val("");
                 };
 
-                inform.onsubmit = (event) => {
+                inform.submit((event) => {
                     event.preventDefault();
-                    results.innerHTML = "";
-                    socket.send(hostnameField.value);
-                };
-            };
+                    socket.send(hostnameField.val());
+                });
+            });
         </script>
     </body>
 </html>

@@ -24,7 +24,7 @@ server.on("connection", (ws) => {
                 http.get(endpoint, (resp) => {
                     let loc = "";
                     resp.on("data", (data) => loc += data);
-                    resp.on("end", () => ws.send(JSON.stringify(loc)));
+                    resp.on("end", () => ws.send(loc));
                 }).on("error", (err) => {
                     console.log("error:", err);
                 });
