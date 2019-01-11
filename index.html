@@ -10,7 +10,7 @@
             <div class="page-header">
                 <h1>Visual Traceroute</h1>
             </div>
-            <div id="url">Connecting...</div>
+            <div id="url"></div>
             <form id="inform" action="#" method="POST">
                 <input type="text" id="hostname" placeholder="Enter host name">
                 <input type="submit" id="btn" value="trace">
@@ -40,6 +40,9 @@
                 var inform = $("#inform");
                 var url = $("#url");
                 var hostnameField = $("#hostname");
+                var hopCount = 0;
+                var prevLat = "";
+                var prevLon = "";
 
                 var socket = new WebSocket("ws://localhost:8080/");
                 socket.onopen = (event) => {
@@ -53,12 +56,18 @@
                     if (loc.status == "fail") {
                         return;
                     }
-                    let row = "<tr><td>0</td><td>" + loc.query
+                    if (loc.lat == prevLat && loc.lon == prevLon) {
+                        return;
+                    }
+                    hopCount++;
+                    let row = "<tr><td>" + hopCount
+                                 + "</td><td>" + loc.query
                                  + "</td><td>" + loc.city
                                  + "</td><td>" + loc.region
                                  + "</td><td>" + loc.country
                                  + "</td></tr>";
                     $("#hops tbody").append(row);
+                    prevLat = loc.lat; prevLon = loc.lon;
                 };
                 socket.onclose = (event) => {
                     url.html = "Connection is now closed";
