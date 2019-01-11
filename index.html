@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
         <title>Trace Route</title>
     </head>
     <body>
@@ -30,7 +32,7 @@
                     </table>
                 </div>
                 <div class="col-lg-6">
-                    <h1>MAP HERE</h1>
+                    <div id="mapid" style="width: 700px; height: 385px"></div>
                 </div>
             </div>
         </div>
@@ -44,6 +46,12 @@
                 var prevLat = "";
                 var prevLon = "";
 
+                // set up the map
+                var mymap = L.map("mapid").setView([39.50, -98.35], 4); // center of US
+                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                    { attribution: '© OpenStreetMap' }).addTo(mymap);
+
+                // set up web socket
                 var socket = new WebSocket("ws://localhost:8080/");
                 socket.onopen = (event) => {
                     url.html = event.currentTarget.url;
