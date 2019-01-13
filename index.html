@@ -54,6 +54,7 @@
                 var mymap = L.map("mapid").setView([39.50, -98.35], 4); // center of US
                 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',
                     { attribution: '© OpenStreetMap' }).addTo(mymap);
+                var polyline = null;
 
                 // set up web socket
                 var socket = new WebSocket("ws://localhost:8080/");
@@ -80,6 +81,13 @@
                                  + "</td></tr>";
                     $("#hops tbody").append(row);
                     prevLat = loc.lat; prevLon = loc.lon;
+                    // add to map
+                    if (polyline == null) {
+                        polyline = L.polyline([[loc.lat, loc.lon]], {color: "purple"}).addTo(mymap);
+                    } else {
+                        var latlon = L.latLng(loc.lat, loc.lon);
+                        polyline.addLatLng(latlon);
+                    }
                 };
                 socket.onclose = (event) => {
                     url.html = "Connection is now closed";
