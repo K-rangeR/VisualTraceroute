@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
         <title>Trace Route</title>
@@ -12,17 +13,25 @@
             <div class="page-header">
                 <h1>Visual Traceroute</h1>
             </div>
-            <div id="url"></div>
-            <form class="form-inline" id="inform" action="#" method="POST">
-                <div class="form-group">
-                    <input type="text" id="hostname" placeholder="Enter host name">
-                </div>
-                <div class="form-group">
-                    <input type="submit" id="btn" value="trace">
-                </div>
-            </form>
             <div class="row">
                 <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel panel-body">
+                            <form class="form-inline" id="inform" action="#" method="POST">
+                                <div class="form-group">
+                                    <input type="text" id="hostname" placeholder="Enter host name">
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" id="btn" value="trace">
+                                </div>
+                                <div class="form-group">
+                                    <div class="spinner-border float-right" role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <table class="table table-striped" id="hops">
                         <thead>
                             <th>Hop</th>
@@ -33,6 +42,8 @@
                         </thead>
                         <tbody>
                         </tbody>
+                        <tfoot>
+                        </tfoot>
                     </table>
                 </div>
                 <div class="col-lg-6">
@@ -40,11 +51,9 @@
                 </div>
             </div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
         <script>
             $(function() {
                 var inform = $("#inform");
-                var url = $("#url");
                 var hostnameField = $("#hostname");
                 var hopCount = 0;
                 var prevLat = "";
@@ -59,14 +68,17 @@
                 // set up web socket
                 var socket = new WebSocket("ws://localhost:8080/");
                 socket.onopen = (event) => {
-                    url.html = event.currentTarget.url;
                 };
                 socket.onerror = (error) => {
-                    url.html = error;
+                    alert("Error! Trace has stopped")
                 };
                 socket.onmessage = (event) => {
                     let loc = JSON.parse(event.data);
                     if (loc.status == "fail") {
+                        return;
+                    }
+                    if (loc.status == "done") {
+                        $("#hops tfoot").append("<tr><td>Trace is done</td></tr>")
                         return;
                     }
                     if (loc.lat == prevLat && loc.lon == prevLon) {
@@ -82,7 +94,7 @@
                     $("#hops tbody").append(row);
                     prevLat = loc.lat; prevLon = loc.lon;
                     // add to map
-                    L.marker([loc.lat, loc.lon], {title: hopCount}).addTo(mymap);
+                    L.marker([loc.lat, loc.lon], {title: "Hop: " + hopCount}).addTo(mymap);
                     if (polyline == null) {
                         polyline = L.polyline([[loc.lat, loc.lon]], {color: "purple"}).addTo(mymap);
                     } else {
@@ -91,7 +103,6 @@
                     }
                 };
                 socket.onclose = (event) => {
-                    url.html = "Connection is now closed";
                     hostnameField.val("");
                 };
 

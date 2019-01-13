@@ -31,6 +31,8 @@ server.on("connection", (ws) => {
             })
             .on("close", (code) => {
                 console.log("trace is done");
+                const done = {status: "done",};
+                ws.send(JSON.stringify(done));
             });
         tracer.trace(hostname.toString());
     });
