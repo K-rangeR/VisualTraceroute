@@ -88,8 +88,8 @@
                                  + "</td></tr>";
                     $("#hops tbody").append(row);
                     prevLat = loc.lat; prevLon = loc.lon;
-                    // add to map
                     var marker = L.marker([loc.lat, loc.lon], {title: "Hop: " + hopCount}).addTo(mymap);
+                    // draw polyline
                     if (polyline == null) {
                         polyline = L.polyline([[loc.lat, loc.lon]], {color: "purple"}).addTo(mymap);
                     } else {
