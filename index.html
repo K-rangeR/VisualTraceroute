@@ -64,9 +64,11 @@
                 var socket = new WebSocket("ws://localhost:8080/");
                 socket.onopen = (event) => {
                 };
+
                 socket.onerror = (error) => {
                     alert("Error! Trace has stopped")
                 };
+
                 socket.onmessage = (event) => {
                     let loc = JSON.parse(event.data);
                     if (loc.status == "fail") {
@@ -79,7 +81,9 @@
                     if (loc.lat == prevLat && loc.lon == prevLon) {
                         return;
                     }
+
                     hopCount++;
+
                     let row = "<tr><td>" + hopCount
                                  + "</td><td>" + loc.query
                                  + "</td><td>" + loc.city
@@ -87,8 +91,10 @@
                                  + "</td><td>" + loc.country
                                  + "</td></tr>";
                     $("#hops tbody").append(row);
+
                     prevLat = loc.lat; prevLon = loc.lon;
                     var marker = L.marker([loc.lat, loc.lon], {title: "Hop: " + hopCount}).addTo(mymap);
+
                     // draw polyline
                     if (polyline == null) {
                         polyline = L.polyline([[loc.lat, loc.lon]], {color: "purple"}).addTo(mymap);
@@ -97,6 +103,7 @@
                         polyline.addLatLng(latlon);
                     }
                 };
+
                 socket.onclose = (event) => {
                     hostnameField.val("");
                 };
