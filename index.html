@@ -53,6 +53,7 @@
                 var hopCount = 0;
                 var prevLat = "";
                 var prevLon = "";
+				var layers = [];
 
                 // set up the map
                 var mymap = L.map("mapid").setView([39.50, -98.35], 4); // center of US
@@ -62,29 +63,28 @@
 
                 // set up web socket
                 var socket = new WebSocket("ws://localhost:8080/");
-                socket.onopen = (event) => {
-                };
-
                 socket.onerror = (error) => {
                     alert("Error! Trace has stopped")
                 };
 
                 socket.onmessage = (event) => {
-                    let loc = JSON.parse(event.data);
+                    var loc = JSON.parse(event.data);
                     if (loc.status == "fail") {
                         return;
                     }
                     if (loc.status == "done") {
                         $("#hops tfoot").append("<tr><td>Trace is done</td></tr>")
+						hostnameField.val("");					
                         return;
                     }
                     if (loc.lat == prevLat && loc.lon == prevLon) {
+						// don't plot duplicate hop
                         return;
                     }
 
                     hopCount++;
 
-                    let row = "<tr><td>" + hopCount
+                    var row = "<tr><td>" + hopCount
                                  + "</td><td>" + loc.query
                                  + "</td><td>" + loc.city
                                  + "</td><td>" + loc.region
@@ -92,12 +92,15 @@
                                  + "</td></tr>";
                     $("#hops tbody").append(row);
 
-                    prevLat = loc.lat; prevLon = loc.lon;
+                    prevLat = loc.lat; 
+					prevLon = loc.lon;
                     var marker = L.marker([loc.lat, loc.lon], {title: "Hop: " + hopCount}).addTo(mymap);
+					layers.push(marker);
 
                     // draw polyline
                     if (polyline == null) {
                         polyline = L.polyline([[loc.lat, loc.lon]], {color: "purple"}).addTo(mymap);
+						layers.push(polyline);
                     } else {
                         var latlon = L.latLng(loc.lat, loc.lon);
                         polyline.addLatLng(latlon);
@@ -110,6 +113,12 @@
 
                 inform.submit((event) => {
                     event.preventDefault();
+					$("#hops tbody").html("");
+					$("#hops tfoot").html("");
+					layers.filter(layer => layer != null).forEach(layer => mymap.removeLayer(layer));
+					polyline = null;
+					layers = [];
+					hopCount = 0;
                     socket.send(hostnameField.val());
                 });
             });
