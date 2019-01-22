@@ -6,3 +6,10 @@ reached during the traceroute. To obtain locational info about each hop the
 ip-api.com web service is queried using the hops IP address. This hop 
 info is then sent to the browser where it is displayed on a table as well as
 drawn on a map.
+
+## Dependencies
+* ws - npm package for using web sockets in nodejs
+* nodejs-traceroute - npm traceroute implementation package
+* Leaflet - javascript map API
+* jQuery 
+* Bootstrap
