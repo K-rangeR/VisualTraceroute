@@ -14,4 +14,11 @@ drawn on a map.
 * jQuery 
 * Bootstrap
 
+## Trace to Google
+
 <img width="1353" alt="screen shot 2019-01-22 at 10 03 57 am" src="https://user-images.githubusercontent.com/43307752/51548145-5d593600-1e2d-11e9-8f64-d77255b59337.png">
+
+## Things to Notice
+* The top row will contain the first hop with a public IP address
+* Some markers will overlap so the tooltip for each marker will contain the 
+hop count of the last hop that was placed there
