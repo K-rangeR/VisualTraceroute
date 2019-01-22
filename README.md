@@ -13,3 +13,5 @@ drawn on a map.
 * Leaflet - javascript map API
 * jQuery 
 * Bootstrap
+
+<img width="1353" alt="screen shot 2019-01-22 at 10 03 57 am" src="https://user-images.githubusercontent.com/43307752/51548145-5d593600-1e2d-11e9-8f64-d77255b59337.png">
